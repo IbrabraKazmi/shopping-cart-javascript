@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="invoice.css">
+
+</head>
+<body>
+
+    <!-- Header with Login and Sign Up buttons -->
+    <header>
+        <div class="nav-buttons">
+            <a href="login.html" class="btn login-btn">Login</a>
+            <a href="signup.html" class="btn signup-btn">Sign Up</a>
+            <a href="home.html" class="home-buttons">Back to Home</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Order Confirmation</h1>
+        <hr>
+        <p>Thank you for your order! Here's your invoice:</p>
+
+        <!-- Invoice Table -->
+        <div class="invoice">
+            <table id="invoice-items">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Items will be added here by JavaScript -->
+                </tbody>
+            </table>
+            <p id="invoice-total-price">Total: $0</p>
+        </div>
+    </div>
+
+    <script src="invoice.js"></script>
+</body>
+
+<script>
+
+window.onload = async function () {
+    const userId = localStorage.getItem('userId');
+
+    // Fetch the latest order for this user
+    const response = await fetch(`http://localhost:5000/orders/${userId}`);
+    const order = await response.json();
+
+    const invoiceTable = document.getElementById('invoice-items');
+    order.products.forEach(product => {
+        const row = invoiceTable.insertRow();
+        row.innerHTML = `
+            <td>${product.name}</td>
+            <td>${product.quantity}</td>
+            <td>${product.price}</td>
+            <td>${product.quantity * product.price}</td>
+        `;
+    });
+
+    document.getElementById('invoice-total-price').innerText = `Total: $${order.total}`;
+};
+
+</script>
+
+</html>
